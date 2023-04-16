@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import TWEEN from '@tweenjs/tween.js'
 
-const ThreeModel = () => {
+const ThreeDModel = () => {
     const containerRef = useRef();
     const canvasRef = useRef();
 
@@ -120,4 +120,4 @@ const ThreeModel = () => {
     );
 };
 
-export default ThreeModel;
+export default ThreeDModel;

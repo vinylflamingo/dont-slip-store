@@ -1,8 +1,4 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { getProductsInCollection } from '../lib/shopify'
-import ProductList from '../components/ProductList'
-import ThreeDModel from '../components/ThreeModel';
+import ThreeDModel from '../components/ThreeDModel';
 import LandingLayout from '../components/LandingLayout';
 
 
