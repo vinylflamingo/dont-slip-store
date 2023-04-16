@@ -7,7 +7,11 @@ module.exports = {
     "./components/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'chivo-mono': ['"Chivo Mono"', 'monospace'],
+      },
+    },
   },
   plugins: [],
 }
