@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { formatter } from '../utils/helpers'
+import { formatter } from '../../../utils/helpers'
 
 export const ProductCard = ({ product }) => {
     const { handle, title } = product.node

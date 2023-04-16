@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import Image from 'next/image'
-import Nav from './../../components/Nav'
+import Nav from './../../components/controls/Nav'
 import { getProductsInCollection } from '../../lib/shopify'
-import ProductList from '../../components/ProductList'
+import ProductList from '../../components/modules/product/ProductList'
 
 export default function Store({ products }) {
     console.log(products)

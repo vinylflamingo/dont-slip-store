@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react'
-import { formatter } from '../utils/helpers'
+import { formatter } from '../../../utils/helpers'
 import ProductOptions from './ProductOptions'
-import { CartContext } from '../context/shopContext'
+import { CartContext } from '../../../context/shopContext'
 
 export default function ProductForm({ product }) {
   const { addToCart } = useContext(CartContext)

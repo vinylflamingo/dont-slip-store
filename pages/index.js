@@ -1,5 +1,5 @@
-import ThreeDModel from '../components/ThreeDModel';
-import LandingLayout from '../components/LandingLayout';
+import ThreeDModel from '../components/modules/3d/ThreeDModel';
+import LandingLayout from '../components/layouts/LandingLayout';
 
 
 export default function Home() {
