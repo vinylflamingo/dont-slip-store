@@ -1,11 +1,14 @@
+import MainLayout from "../../components/layouts/MainLayout";
 import ProductPageContent from "../../components/modules/product/ProductPageContent";
 import { getAllProducts, getProduct } from "../../lib/shopify"
 
 export default function ProductPage({ product }) {
   return (
-    <div className="min-h-screen py-12 sm:pt-20">
-      <ProductPageContent product={product} />
-    </div>
+    <MainLayout>
+      <div className="py-12 sm:pt-20 font-chivo-mono">
+        <ProductPageContent product={product} />
+      </div>
+    </MainLayout>
   )
 }
 
