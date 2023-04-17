@@ -1,5 +1,6 @@
-import ThreeDModel from '../components/ThreeDModel';
-import LandingLayout from '../components/LandingLayout';
+import ThreeDModel from '../components/modules/3d/ThreeDModel';
+import LandingLayout from '../components/layouts/LandingLayout';
+import SubscribeForm from '../components/modules/mailchimp/SubscribeForm';
 
 
 export default function Home() {
@@ -10,7 +11,7 @@ export default function Home() {
         <div className="bg-black font-verdana text-white flex items-center justify-center lg:p-10 ">
           <div id="3d" className="mt-5 row-start-1 row-end-2"></div>
           <div className="container bg-black w-[85%] lg:w-1/2 p-5 text-white flex items-center justify-center flex-col text-sm mt-5 row-start-2 row-end-3">
-            <p className="leading-4 chivo-mono text-xs text-center">
+            <p className="leading-4 chivo-mono text-sm text-center">
               Our webstore is currently closed and will reopen soon with our Summer/Fall 2023 collection. For information
               regarding future news, discounts, giveaways, and releases, please sign up for our mailing list below.
             </p>
@@ -26,6 +27,7 @@ export default function Home() {
                   fill="white"></path>
               </svg>
             </a>
+            <SubscribeForm />
           </div>
         </div>
       </LandingLayout>

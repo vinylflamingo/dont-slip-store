@@ -1,10 +1,10 @@
-import ProductPageContent from "../../components/ProductPageContent";
-import { getAllProducts, getProduct } from "../../lib/shopify" 
+import ProductPageContent from "../../components/modules/product/ProductPageContent";
+import { getAllProducts, getProduct } from "../../lib/shopify"
 
 export default function ProductPage({ product }) {
   return (
     <div className="min-h-screen py-12 sm:pt-20">
-      <ProductPageContent product={product}/>
+      <ProductPageContent product={product} />
     </div>
   )
 }
@@ -16,14 +16,15 @@ export async function getStaticPaths() {
     const product = String(item.node.handle)
 
     return {
-      params: { 
+      params: {
         product
-      }}
-  })
-    return {
-        paths, 
-        fallback: false
+      }
     }
+  })
+  return {
+    paths,
+    fallback: false
+  }
 }
 
 export async function getStaticProps({ params }) {

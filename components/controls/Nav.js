@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useContext } from 'react'
-import { CartContext } from '../context/shopContext'
-import MiniCart from './MiniCart'
+import { CartContext } from '../../context/shopContext'
+import MiniCart from '../modules/store/MiniCart'
 
 export default function Nav() {
     const { cart, cartOpen, setCartOpen } = useContext(CartContext)
