@@ -3,8 +3,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
 import Image from 'next/image'
 import Link from 'next/link'
-import { CartContext } from '../context/shopContext'
-import { formatter } from '../utils/helpers'
+import { CartContext } from '../../../context/shopContext'
+import { formatter } from '../../../utils/helpers'
 
 export default function MiniCart({ cart }) {
     const cancelButtonRef = useRef()
