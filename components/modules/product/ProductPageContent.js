@@ -9,7 +9,7 @@ export default function ProductPageContent({ product }) {
     md:flex-row md:items-start md:space-y-0 md:space-x-4
     lg:space-x-8 max-w-6xl w-11/12 mx-auto'>
       <div className='
-      w-full max-w-md border bg-white rounded-2xl 
+      w-full max-w-md border bg-white border-black p-20
       overflow-hidden shadow-lg md:w-1/2'>
         <div className='relative h-96 w-full'>
           <Image

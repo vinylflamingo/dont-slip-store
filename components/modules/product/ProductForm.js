@@ -4,7 +4,7 @@ import ProductOptions from './ProductOptions'
 import { CartContext } from '../../../context/shopContext'
 
 export default function ProductForm({ product }) {
-  const { addToCart } = useContext(CartContext)
+  const { addToCart, cartOpen, setCartOpen } = useContext(CartContext);
 
 
   const allVariantOptions = product.variants.edges?.map(variant => {
@@ -52,7 +52,7 @@ export default function ProductForm({ product }) {
   }
 
   return (
-    <div className="rounded-2xl p-4 shadow-lg flex flex-col w-full md:w-1/3">
+    <div className="p-4 flex flex-col w-full md:w-1/3">
       <h2 className='text-4xl font-bold'>{product.title}</h2>
       <span className='pb-6'>{formatter.format(product.variants.edges[0].node.priceV2.amount)}</span>
       {
@@ -69,7 +69,8 @@ export default function ProductForm({ product }) {
 
       <button
         onClick={() => {
-          addToCart(selectedVariant)
+          addToCart(selectedVariant);
+          setCartOpen(!cartOpen);
         }}
         className='bg-black rounded-lg text-white px-2 py-3 hover:bg-gray-800'>
         Add to Cart
