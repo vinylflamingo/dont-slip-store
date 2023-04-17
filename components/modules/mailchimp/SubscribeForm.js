@@ -1,9 +1,11 @@
 // components/SubscribeForm.js
 import { useState } from 'react';
+import ThankYou from './ThankYou';
 
 export default function SubscribeForm() {
     const [email, setEmail] = useState('');
     const [firstName, setFirstName] = useState('');
+    const [success, setSuccess] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,15 +20,19 @@ export default function SubscribeForm() {
             });
 
             if (response.ok) {
-                alert('Subscribed successfully!');
+                setSuccess(true);
             } else {
-                throw new Error('Something went wrong');
+                throw new Error('Something went wrong, please try again later.');
             }
         } catch (error) {
             console.error(error);
             alert('Error: ' + error.message);
         }
     };
+
+    if (success) {
+        return <ThankYou />;
+    }
 
     return (
         <form onSubmit={handleSubmit} className="text-center flex flex-col justify-center items-center pt-5 text-sm">
@@ -52,7 +58,7 @@ export default function SubscribeForm() {
 
             <button
                 type="submit"
-                className="w-16 bg-black text-white border-2 border-white transition-all duration-300 ease-in-out hover:bg-white hover:text-black pb-1 font-chivo-mono"
+                className="w-16 bg-black text-white border-2 border-white transition-all duration-300 ease-in-out hover:bg-white hover:text-black font-chivo-mono"
             >
                 submit
             </button>
