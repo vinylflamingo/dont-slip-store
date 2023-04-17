@@ -1,15 +1,16 @@
 import React from 'react'
+import Nav from '../controls/Nav'
+import Footer from '../controls/Footer'
 export default function MainLayout({ children }) {
   return (
-    <html>
-      <main>
-        <div className='flex flex-col justify-between min-h-screen'>
+    <div className='flex flex-col min-h-screen bg-white items-center mx-1 md:max-w-[1666px] justify-center'>
+      <Nav />
+      <main className='mt-10 w-full'>
+        <div>
           {children}
         </div>
       </main>
-
-      <footer>
-      </footer>
-    </html>
+      <Footer />
+    </div>
   )
 }
