@@ -39,7 +39,6 @@ const ThreeDModel = () => {
         pointLight.position.set(0, 0, 10);
         scene.add(ambientLight);
         scene.add(pointLight);
-
         camera.position.z = 5;
 
         function animate() {
@@ -98,14 +97,62 @@ const ThreeDModel = () => {
             }
         };
 
+        const onTouchStart = (e) => {
+            e.preventDefault(); // Prevents scrolling while interacting with the model
+            isDragging = true;
+        };
+
+        const onTouchMove = (e) => {
+            if (isDragging && model) {
+                const deltaMove = {
+                    x: e.touches[0].clientX - previousMousePosition.x,
+                    y: e.touches[0].clientY - previousMousePosition.y,
+                };
+                const deltaRotationQuaternion = new THREE.Quaternion().setFromEuler(
+                    new THREE.Euler(
+                        toRadians(deltaMove.y * 1),
+                        toRadians(deltaMove.x * 1),
+                        0,
+                        'XYZ'
+                    )
+                );
+                model.quaternion.multiplyQuaternions(deltaRotationQuaternion, model.quaternion);
+            }
+            previousMousePosition = {
+                x: e.touches[0].clientX,
+                y: e.touches[0].clientY,
+            };
+        };
+
+        const onTouchEnd = (e) => {
+            isDragging = false;
+            if (model) {
+                const currentQuaternion = model.quaternion.clone();
+                const targetQuaternion = originalQuaternion;
+
+                const tween = new TWEEN.Tween({ t: 0 })
+                    .to({ t: 1 }, 3000)
+                    .onUpdate(({ t }) => {
+                        model.quaternion.copy(currentQuaternion).slerp(targetQuaternion, t);
+                    })
+                    .start();
+            }
+        };
+
         container.addEventListener('mousedown', onMouseDown);
         container.addEventListener('mousemove', onMouseMove);
         container.addEventListener('mouseup', onMouseUp);
+        container.addEventListener('touchstart', onTouchStart);
+        container.addEventListener('touchmove', onTouchMove);
+        container.addEventListener('touchend', onTouchEnd);
 
         return () => {
             container.removeEventListener('mousedown', onMouseDown);
             container.removeEventListener('mousemove', onMouseMove);
             container.removeEventListener('mouseup', onMouseUp);
+            container.removeEventListener('touchstart', onTouchStart);
+            container.removeEventListener('touchmove', onTouchMove);
+            container.removeEventListener('touchend', onTouchEnd);
         };
     }, []);
 
