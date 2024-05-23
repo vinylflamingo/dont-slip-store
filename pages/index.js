@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div>
       <LandingLayout>
-        <ThreeDModel />
+        <ThreeDModel touchable={true}/>
         <div className="bg-black font-verdana text-white flex items-center justify-center lg:p-10 ">
           <div id="3d" className="mt-5 row-start-1 row-end-2"></div>
           <div className="container bg-black w-[85%] lg:w-1/2 p-5 text-white flex items-center justify-center flex-col text-sm mt-5 row-start-2 row-end-3">

@@ -13,8 +13,7 @@ export default function Store({ products }) {
         <div className="flex flex-col items-center justify-center">
             <MainLayout>
                 <div className='flex flex-col items-center justify-center'>
-                    <FullImageBanner white={true}/>
-                    {/* <ThreeDModel /> */}
+                    <ThreeDModel color="white" />
                     <ProductList products={products} />
                 </div>
             </MainLayout>

@@ -1,32 +1,48 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import TWEEN from '@tweenjs/tween.js'
+import TWEEN from '@tweenjs/tween.js';
 
-const ThreeDModel = (white = false) => {
+const ThreeDModel = ({ color, touchable}) => {
+    console.log("touchable: ", touchable)
+
     const containerRef = useRef();
     const canvasRef = useRef();
-
+    const cameraRef = useRef();
 
     useEffect(() => {
         const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
-        const container = containerRef.current;
-        if (white === true)
-        {
+
+        if (color === "white") {
             renderer.setClearColor(0xffffff, 1); // Set background color to white
         }
+        const container = containerRef.current;
 
-
-        renderer.setSize(window.innerWidth * 0.50, window.innerHeight * 0.50);
-        container.appendChild(renderer.domElement);
-
-        const scene = new THREE.Scene();
+        // Initialize the camera here
         const camera = new THREE.PerspectiveCamera(
             window.innerWidth < 650 ? 9 : 7,
             window.innerWidth / window.innerHeight,
             0.1,
             1000
         );
+        camera.position.z = 5;
+        cameraRef.current = camera; // Store the camera in a ref
+
+        const updateCanvasSize = () => {
+            const isMobile = window.innerWidth < 650;
+            const width = isMobile ? window.innerWidth : window.innerWidth * 0.50;
+            const height = isMobile ? window.innerWidth : window.innerHeight * 0.50;
+            renderer.setSize(width, height);
+
+            // Update the camera aspect ratio and projection matrix
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        };
+
+        updateCanvasSize();
+        container.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
 
         const loader = new GLTFLoader();
         let model = null;
@@ -39,12 +55,25 @@ const ThreeDModel = (white = false) => {
             scene.add(model);
         });
 
+        // Add multiple lights to ensure the model is well-lit from all angles
         const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-        const pointLight = new THREE.PointLight(0xffffff, 1);
-        pointLight.position.set(0, 0, 10);
         scene.add(ambientLight);
-        scene.add(pointLight);
-        camera.position.z = 5;
+
+        const pointLight1 = new THREE.PointLight(0xffffff, 0.8);
+        pointLight1.position.set(10, 10, 10);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0xffffff, 0.8);
+        pointLight2.position.set(-10, -10, 10);
+        scene.add(pointLight2);
+
+        const pointLight3 = new THREE.PointLight(0xffffff, 0.8);
+        pointLight3.position.set(-10, 10, -10);
+        scene.add(pointLight3);
+
+        const pointLight4 = new THREE.PointLight(0xffffff, 0.8);
+        pointLight4.position.set(10, -10, -10);
+        scene.add(pointLight4);
 
         function animate() {
             requestAnimationFrame(animate);
@@ -143,23 +172,34 @@ const ThreeDModel = (white = false) => {
                     .start();
             }
         };
+        
+        if (touchable === true) {
+            container.addEventListener('mousedown', onMouseDown);
+            container.addEventListener('mousemove', onMouseMove);
+            container.addEventListener('mouseup', onMouseUp);
 
-        container.addEventListener('mousedown', onMouseDown);
-        container.addEventListener('mousemove', onMouseMove);
-        container.addEventListener('mouseup', onMouseUp);
-        container.addEventListener('touchstart', onTouchStart);
-        container.addEventListener('touchmove', onTouchMove);
-        container.addEventListener('touchend', onTouchEnd);
+            container.addEventListener('touchstart', onTouchStart);
+            container.addEventListener('touchmove', onTouchMove);
+            container.addEventListener('touchend', onTouchEnd);
+        }
+
+        window.addEventListener('resize', updateCanvasSize);
 
         return () => {
-            container.removeEventListener('mousedown', onMouseDown);
-            container.removeEventListener('mousemove', onMouseMove);
-            container.removeEventListener('mouseup', onMouseUp);
-            container.removeEventListener('touchstart', onTouchStart);
-            container.removeEventListener('touchmove', onTouchMove);
-            container.removeEventListener('touchend', onTouchEnd);
+            
+            if (touchable === true) {
+                container.removeEventListener('mousedown', onMouseDown);
+                container.removeEventListener('mousemove', onMouseMove);
+                container.removeEventListener('mouseup', onMouseUp);
+
+                container.removeEventListener('touchstart', onTouchStart);
+                container.removeEventListener('touchmove', onTouchMove);
+                container.removeEventListener('touchend', onTouchEnd);
+            }
+
+            window.removeEventListener('resize', updateCanvasSize);
         };
-    }, []);
+    }, [color, touchable]);
 
     function toRadians(degrees) {
         return degrees * Math.PI / 180;
