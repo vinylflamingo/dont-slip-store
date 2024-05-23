@@ -12,6 +12,7 @@ export default function ProductPageContent({ product }) {
       w-full max-w-md border bg-white border-black p-5 lg:p-20
       overflow-hidden shadow-lg md:w-1/2'>
         <div className='relative h-96 w-full'>
+        {product.image && (
           <Image
             src={product.images.edges[0].node.url}
             alt={product.images.edges[0].node.altText}
@@ -19,6 +20,7 @@ export default function ProductPageContent({ product }) {
             objectFit="cover"
             priority={true}
           />
+        )}
         </div>
       </div>
       <ProductForm product={product} />

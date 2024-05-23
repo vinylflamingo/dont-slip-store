@@ -12,7 +12,7 @@ export default function Store({ products }) {
 
         <div className="flex flex-col items-center justify-center">
             <MainLayout>
-                <div className=''>
+                <div className='flex flex-col items-center justify-center'>
                     <FullImageBanner />
                     <ProductList products={products} />
                 </div>
