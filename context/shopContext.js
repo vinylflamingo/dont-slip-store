@@ -27,40 +27,45 @@ export default function ShopProvider({ children }) {
     }, [])
 
 
-    async function addToCart(addedItem) {
-        const newItem = { ...addedItem }
-        setCartOpen(true)
-
+    async function addToCart(addedItem, quantity = 1, product) {
+        const newItem = { ...addedItem };
+        setCartOpen(true);
+    
         if (cart.length === 0) {
-            setCart([newItem])
-
-            const checkout = await createCheckout(newItem.id, 1)
-
-            setCheckoutId(checkout.id)
-            setCheckoutUrl(checkout.webUrl)
-
-            localStorage.setItem("checkout_id", JSON.stringify([newItem, checkout]))
+            setCart([{ ...newItem, variantQuantity: quantity }]);
+    
+            const checkout = await createCheckout(newItem.id, quantity);
+    
+            setCheckoutId(checkout.id);
+            setCheckoutUrl(checkout.webUrl);
+    
+            localStorage.setItem("checkout_id", JSON.stringify([{ ...newItem, variantQuantity: quantity }, checkout]));
         } else {
-            let newCart = []
-            let added = false
-
+            let newCart = [];
+            let added = false;
+    
             cart.map(item => {
                 if (item.id === newItem.id) {
-                    item.variantQuantity++
-                    newCart = [...cart]
-                    added = true
+                    if (item.variantQuantity + quantity > newItem.variantQuantity) {
+                        alert('Not enough stock available');
+                        return;
+                    }
+                    item.variantQuantity += quantity;
+                    newCart = [...cart];
+                    added = true;
                 }
-            })
-
+            });
+    
             if (!added) {
-                newCart = [...cart, newItem]
+                newCart = [...cart, { ...newItem, variantQuantity: quantity }];
             }
-
-            setCart(newCart)
-            const newCheckout = await updateCheckout(checkoutId, newCart)
-            localStorage.setItem("checkout_id", JSON.stringify([newCart, newCheckout]))
+    
+            setCart(newCart);
+            const newCheckout = await updateCheckout(checkoutId, newCart);
+            localStorage.setItem("checkout_id", JSON.stringify([newCart, newCheckout]));
         }
     }
+
 
     async function removeCartItem(itemToRemove) {
         const updatedCart = cart.filter(item => item.id !== itemToRemove)
@@ -128,6 +133,24 @@ export default function ShopProvider({ children }) {
 
     }
 
+    async function handleCheckout() {
+        // Extract and save the checkout data from local storage
+        const checkoutData = JSON.parse(localStorage.getItem('checkout_id'));
+        
+        // Clear the current cart context
+        setCart([]);
+        setCheckoutId('');
+        setCheckoutUrl('');
+        localStorage.removeItem('checkout_id');
+    
+        // Use the saved checkout data to redirect
+        if (checkoutData && checkoutData[1] && checkoutData[1].webUrl) {
+            window.location.href = checkoutData[1].webUrl;
+        } else {
+            console.error('No valid checkout URL found.');
+        }
+    }
+
 
     return (
         <CartContext.Provider value={{
@@ -140,7 +163,8 @@ export default function ShopProvider({ children }) {
             clearCart,
             cartLoading,
             incrementCartItem,
-            decrementCartItem
+            decrementCartItem,
+            handleCheckout
         }}>
             {children}
         </CartContext.Provider>

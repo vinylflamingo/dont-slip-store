@@ -8,12 +8,11 @@ import { formatter } from '../../../utils/helpers'
 
 export default function MiniCart({ cart }) {
     const cancelButtonRef = useRef()
-    const { cartOpen, setCartOpen, checkoutUrl, removeCartItem } = useContext(CartContext)
+    const { cartOpen, setCartOpen, removeCartItem, handleCheckout } = useContext(CartContext)
     let cartTotal = 0
     cart.map(item => {
         cartTotal += item?.variantPrice * item?.variantQuantity
     })
-
 
     return (
         <Transition.Root show={cartOpen} as={Fragment}>
@@ -131,12 +130,12 @@ export default function MiniCart({ cart }) {
                                                     </div>
                                                     <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                                                     <div className="mt-6">
-                                                        <a
-                                                            href={checkoutUrl}
-                                                            className="flex items-center justify-center rounded-md border border-transparent bg-black px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-500"
+                                                        <button
+                                                            onClick={() => {handleCheckout()}}
+                                                            className="w-[100%] flex items-center justify-center rounded-md border border-transparent bg-black px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-gray-500"
                                                         >
                                                             Checkout
-                                                        </a>
+                                                        </button>
                                                     </div>
                                                     <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                                                         <p>

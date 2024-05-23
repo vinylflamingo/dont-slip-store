@@ -1,6 +1,12 @@
 import React from 'react'
 
 export default function ProductOptions({ name, values, selectedOptions, setOptions }) {
+
+
+    // default if no variant.
+    if (name === "Title"){ 
+        return <></>
+    }
     return (
         <fieldset>
             <legend className='text-xl font-semibold'>{name}</legend>

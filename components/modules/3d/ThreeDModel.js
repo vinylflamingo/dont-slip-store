@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import TWEEN from '@tweenjs/tween.js'
 
-const ThreeDModel = () => {
+const ThreeDModel = (white = false) => {
     const containerRef = useRef();
     const canvasRef = useRef();
 
@@ -11,6 +11,11 @@ const ThreeDModel = () => {
     useEffect(() => {
         const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
         const container = containerRef.current;
+        if (white === true)
+        {
+            renderer.setClearColor(0xffffff, 1); // Set background color to white
+        }
+
 
         renderer.setSize(window.innerWidth * 0.50, window.innerHeight * 0.50);
         container.appendChild(renderer.domElement);
@@ -161,7 +166,7 @@ const ThreeDModel = () => {
     }
 
     return (
-        <div ref={containerRef} className="mt-10 lg:mt-[8%]">
+        <div ref={containerRef} className="mt-10 lg:mt-[8%] bg-white">
             <canvas ref={canvasRef} />
         </div>
     );
