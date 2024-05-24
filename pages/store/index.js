@@ -23,9 +23,10 @@ export default function Store({ products }) {
 
 export async function getStaticProps() {
     const products = await getProductsInCollection()
-
     return {
-        props: { products },
+        props: { 
+            products 
+        },
+        revalidate: 60
     }
-
 }

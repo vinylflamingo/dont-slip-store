@@ -206,7 +206,7 @@ const ThreeDModel = ({ color, touchable}) => {
     }
 
     return (
-        <div ref={containerRef} className="mt-10 lg:mt-[8%] bg-white">
+        <div ref={containerRef} className="lg:mt-[40px] bg-white">
             <canvas ref={canvasRef} />
         </div>
     );

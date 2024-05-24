@@ -4,6 +4,7 @@ import ProductOptions from './ProductOptions'
 import { CartContext } from '../../../context/shopContext'
 
 export default function ProductForm({ product }) {
+  console.log(product);
   const { addToCart, cartOpen, setCartOpen, cart } = useContext(CartContext);
 
   const [allVariantOptions, setAllVariantOptions] = useState(product.variants.edges
@@ -83,7 +84,13 @@ export default function ProductForm({ product }) {
       .filter(variant => variant != null);
 
     setAllVariantOptions(updatedVariants);
-    setSelectedVariant(updatedVariants[0] || null); // Update selected variant to the first one in the list
+    if (updatedVariants.length > 0) {
+      setSelectedVariant(updatedVariants[0]); // Update selected variant to the first one in the list
+      setSelectedOptions(updatedVariants[0].options); // Update selected options to match the new selected variant
+    } else {
+      setSelectedVariant(null);
+      setSelectedOptions(defaultValues); // Reset selected options if no variants are available
+    }
   }
 
   useEffect(() => {
@@ -107,8 +114,12 @@ export default function ProductForm({ product }) {
       ))}
       <button
         onClick={() => {
-          addToCart(selectedVariant, 1, product);
-          setCartOpen(!cartOpen);
+          if (selectedVariant) {
+            addToCart(selectedVariant, 1, product);
+            setCartOpen(!cartOpen);
+          } else {
+            alert('No variant selected or available');
+          }
         }}
         className='bg-black rounded-lg text-white px-2 py-3 hover:bg-gray-800'>
         Add to Cart
