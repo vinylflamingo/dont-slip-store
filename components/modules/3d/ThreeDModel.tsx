@@ -3,13 +3,26 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import TWEEN from '@tweenjs/tween.js';
 
-const ThreeDModel = ({ color, touchable}) => {
-    const containerRef = useRef();
-    const canvasRef = useRef();
-    const cameraRef = useRef();
+interface ThreeDModelProps {
+    color?: string;
+    touchable?: boolean;
+}
+
+const ThreeDModel = ({ color, touchable }: ThreeDModelProps) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const cameraRef = useRef<THREE.PerspectiveCamera | undefined>(undefined);
 
     useEffect(() => {
-        const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
+        if (!canvasRef.current || !containerRef.current) return;
+
+        const renderer = new THREE.WebGLRenderer({
+            canvas: canvasRef.current,
+            antialias: true
+        });
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
 
         if (color === "white") {
             renderer.setClearColor(0xffffff, 1); // Set background color to white
@@ -43,8 +56,8 @@ const ThreeDModel = ({ color, touchable}) => {
         const scene = new THREE.Scene();
 
         const loader = new GLTFLoader();
-        let model = null;
-        let originalQuaternion = null;
+        let model: THREE.Group | null = null;
+        let originalQuaternion: THREE.Quaternion | null = null;
 
         loader.load('/3d/logo3d.glb', (gltf) => {
             model = gltf.scene;
@@ -53,28 +66,33 @@ const ThreeDModel = ({ color, touchable}) => {
             scene.add(model);
         });
 
-        // Add multiple lights to ensure the model is well-lit from all angles
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        // Add sun-like lighting with more contrast and directionality
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         scene.add(ambientLight);
 
-        const pointLight1 = new THREE.PointLight(0xffffff, 0.8);
-        pointLight1.position.set(10, 10, 10);
-        scene.add(pointLight1);
+        // Main directional light (sun)
+        const sunLight = new THREE.DirectionalLight(0xffffff, 4);
+        sunLight.position.set(5, 8, 5);
+        scene.add(sunLight);
 
-        const pointLight2 = new THREE.PointLight(0xffffff, 0.8);
-        pointLight2.position.set(-10, -10, 10);
-        scene.add(pointLight2);
+        // Key light (bright, main illumination)
+        const keyLight = new THREE.PointLight(0xffffff, 5);
+        keyLight.position.set(10, 10, 10);
+        scene.add(keyLight);
 
-        const pointLight3 = new THREE.PointLight(0xffffff, 0.8);
-        pointLight3.position.set(-10, 10, -10);
-        scene.add(pointLight3);
+        // Fill light (softer, to reduce harsh shadows)
+        const fillLight = new THREE.PointLight(0xb8d4ff, 2);
+        fillLight.position.set(-10, 5, 5);
+        scene.add(fillLight);
 
-        const pointLight4 = new THREE.PointLight(0xffffff, 0.8);
-        pointLight4.position.set(10, -10, -10);
-        scene.add(pointLight4);
+        // Rim light (for edge definition and contrast)
+        const rimLight = new THREE.PointLight(0xffffff, 3);
+        rimLight.position.set(0, 5, -10);
+        scene.add(rimLight);
 
         function animate() {
             requestAnimationFrame(animate);
+            TWEEN.update();
             if (model) {
                 model.rotation.y += 0.01;
             }
@@ -88,11 +106,11 @@ const ThreeDModel = ({ color, touchable}) => {
             y: 0,
         };
 
-        const onMouseDown = (e) => {
+        const onMouseDown = (e: MouseEvent) => {
             isDragging = true;
         };
 
-        const onMouseMove = (e) => {
+        const onMouseMove = (e: MouseEvent) => {
             if (isDragging && model) {
                 const deltaMove = {
                     x: e.clientX - previousMousePosition.x,
@@ -114,27 +132,27 @@ const ThreeDModel = ({ color, touchable}) => {
             };
         };
 
-        const onMouseUp = (e) => {
+        const onMouseUp = (e: MouseEvent) => {
             isDragging = false;
-            if (model) {
+            if (model && originalQuaternion) {
                 const currentQuaternion = model.quaternion.clone();
                 const targetQuaternion = originalQuaternion;
 
                 const tween = new TWEEN.Tween({ t: 0 })
                     .to({ t: 1 }, 3000)
                     .onUpdate(({ t }) => {
-                        model.quaternion.copy(currentQuaternion).slerp(targetQuaternion, t);
+                        model!.quaternion.copy(currentQuaternion).slerp(targetQuaternion, t);
                     })
                     .start();
             }
         };
 
-        const onTouchStart = (e) => {
+        const onTouchStart = (e: TouchEvent) => {
             e.preventDefault(); // Prevents scrolling while interacting with the model
             isDragging = true;
         };
 
-        const onTouchMove = (e) => {
+        const onTouchMove = (e: TouchEvent) => {
             if (isDragging && model) {
                 const deltaMove = {
                     x: e.touches[0].clientX - previousMousePosition.x,
@@ -156,21 +174,21 @@ const ThreeDModel = ({ color, touchable}) => {
             };
         };
 
-        const onTouchEnd = (e) => {
+        const onTouchEnd = (e: TouchEvent) => {
             isDragging = false;
-            if (model) {
+            if (model && originalQuaternion) {
                 const currentQuaternion = model.quaternion.clone();
                 const targetQuaternion = originalQuaternion;
 
                 const tween = new TWEEN.Tween({ t: 0 })
                     .to({ t: 1 }, 3000)
                     .onUpdate(({ t }) => {
-                        model.quaternion.copy(currentQuaternion).slerp(targetQuaternion, t);
+                        model!.quaternion.copy(currentQuaternion).slerp(targetQuaternion, t);
                     })
                     .start();
             }
         };
-        
+
         if (touchable === true) {
             container.addEventListener('mousedown', onMouseDown);
             container.addEventListener('mousemove', onMouseMove);
@@ -184,7 +202,7 @@ const ThreeDModel = ({ color, touchable}) => {
         window.addEventListener('resize', updateCanvasSize);
 
         return () => {
-            
+
             if (touchable === true) {
                 container.removeEventListener('mousedown', onMouseDown);
                 container.removeEventListener('mousemove', onMouseMove);
@@ -199,7 +217,7 @@ const ThreeDModel = ({ color, touchable}) => {
         };
     }, [color, touchable]);
 
-    function toRadians(degrees) {
+    function toRadians(degrees: number): number {
         return degrees * Math.PI / 180;
     }
 

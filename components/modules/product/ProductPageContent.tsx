@@ -1,8 +1,13 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import ProductForm from './ProductForm'
+import { ShopifyProduct, ShopifyImageEdge } from '../../../types/shopify'
 
-export default function ProductPageContent({ product }) {
+interface ProductPageContentProps {
+  product: ShopifyProduct
+}
+
+export default function ProductPageContent({ product }: ProductPageContentProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const images = product.images?.edges || []
   const hasMultipleImages = images.length > 1
@@ -32,8 +37,8 @@ export default function ProductPageContent({ product }) {
           <Image
             src={images[currentImageIndex].node.url}
             alt={images[currentImageIndex].node.altText || product.title}
-            layout="fill"
-            objectFit="cover"
+            fill
+            style={{ objectFit: 'cover' }}
             priority={currentImageIndex === 0}
           />
         )}
@@ -58,7 +63,7 @@ export default function ProductPageContent({ product }) {
               </svg>
             </button>
             <div className='absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-2'>
-              {images.map((_, index) => (
+              {images.map((_: ShopifyImageEdge, index: number) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}

@@ -3,11 +3,16 @@ import { createAdminApiClient } from '@shopify/admin-api-client';
 const domain = process.env.SHOPIFY_STORE_DOMAIN;
 const accessToken = process.env.SHOPIFY_ADMIN_ACCESSTOKEN;
 
-export default async function updateInventory(data) {
+interface InventoryUpdate {
+    variantId: number;
+    quantity: number;
+}
+
+export default async function updateInventory(data: InventoryUpdate[]) {
     const client = createAdminApiClient({
-        storeDomain: domain,
+        storeDomain: domain!,
         apiVersion: '2024-04',
-        accessToken: accessToken,
+        accessToken: accessToken!,
     });
 
     const mutation = `

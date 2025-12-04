@@ -5,12 +5,10 @@ export default function Footer() {
         <nav className="border border-black max-w-[1266px] w-full mx-2 sticky top-2 z-20 bg-white font-chivo-mono mb-4">
             <div className="flex items-center justify-start md:justify-between max-w-6xl py-3 px-4 mx-auto lg:max-w-screen-xl">
                 <div className='flex flex-row justify-center items-center'>
-                    <Link href="/" passHref>
-                        <a className="cursor-pointer">
-                            <span className=" text-sm md:text-lg pt-1">
-                                DSJD
-                            </span>
-                        </a>
+                    <Link href="/" className="cursor-pointer">
+                        <span className=" text-sm md:text-lg pt-1">
+                            DSJD
+                        </span>
                     </Link>
                     <a href="https://instagram.com/dontslip_justdrip" target="_blank" rel="noreferrer" className="pl-5">
                         <svg

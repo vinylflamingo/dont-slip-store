@@ -8,8 +8,8 @@ export default function FullImageBanner() {
                     <Image
                         src="/img/bg.jpg"
                         alt="Your Image"
-                        layout="fill"
-                        objectFit="cover"
+                        fill
+                        style={{ objectFit: 'cover' }}
                     />
                 </div>
             </div>
@@ -17,9 +17,8 @@ export default function FullImageBanner() {
                 <Image
                     src="/img/bg.jpg"
                     alt="Your Image"
-                    layout="fill"
-                    objectFit="cover"
-                    objectPosition="center"
+                    fill
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
                 />
             </div>
         </div>

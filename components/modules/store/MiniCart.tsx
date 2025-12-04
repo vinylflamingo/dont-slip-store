@@ -1,13 +1,18 @@
 import { Fragment, useContext, useRef } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { XIcon } from '@heroicons/react/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import Link from 'next/link'
 import { CartContext } from '../../../context/shopContext'
 import { formatter } from '../../../utils/helpers'
+import { CartItem } from '../../../types/shopify'
 
-export default function MiniCart({ cart }) {
-    const cancelButtonRef = useRef()
+interface MiniCartProps {
+    cart: CartItem[]
+}
+
+export default function MiniCart({ cart }: MiniCartProps) {
+    const cancelButtonRef = useRef<HTMLButtonElement>(null)
     const { cartOpen, setCartOpen, removeCartItem, handleCheckout } = useContext(CartContext)
     let cartTotal = 0
     cart.map(item => {
@@ -15,7 +20,7 @@ export default function MiniCart({ cart }) {
     })
 
     return (
-        <Transition.Root show={cartOpen} as={Fragment}>
+        <Transition show={cartOpen} as={Fragment}>
             <Dialog initialFocus={cancelButtonRef} as="div" className="relative z-50" onClose={() => { setCartOpen(!cartOpen) }}>
                 <Transition.Child
                     as={Fragment}
@@ -54,7 +59,7 @@ export default function MiniCart({ cart }) {
                                                         onClick={() => setCartOpen(false)}
                                                     >
                                                         <span className="sr-only">Close panel</span>
-                                                        <XIcon className="h-6 w-6" aria-hidden="true" />
+                                                        <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -71,8 +76,8 @@ export default function MiniCart({ cart }) {
                                                                             <Image
                                                                                 src={product.image}
                                                                                 alt={product.title}
-                                                                                layout="fill"
-                                                                                objectFit="cover"
+                                                                                fill
+                                                                                style={{ objectFit: 'cover' }}
                                                                             />
                                                                         </div>
 
@@ -80,8 +85,8 @@ export default function MiniCart({ cart }) {
                                                                             <div>
                                                                                 <div className="flex justify-between text-base font-medium text-gray-900">
                                                                                     <h3>
-                                                                                        <Link href={`/products/${product.handle}`} passHref>
-                                                                                            <a onClick={() => { setCartOpen(false) }}>{product.title}</a>
+                                                                                        <Link href={`/products/${product.handle}`} onClick={() => { setCartOpen(false) }}>
+                                                                                            {product.title}
                                                                                         </Link>
                                                                                     </h3>
                                                                                     <p className="ml-4">{formatter.format(product.variantPrice)}</p>
@@ -160,6 +165,6 @@ export default function MiniCart({ cart }) {
                     </div>
                 </div>
             </Dialog>
-        </Transition.Root>
+        </Transition>
     )
 }

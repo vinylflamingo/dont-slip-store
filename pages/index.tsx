@@ -2,6 +2,7 @@ import Head from 'next/head';
 import ThreeDModel from '../components/modules/3d/ThreeDModel';
 import LandingLayout from '../components/layouts/LandingLayout';
 import SubscribeForm from '../components/modules/mailchimp/SubscribeForm';
+import type { GetServerSideProps } from 'next';
 
 export default function Home() {
   const jsonLd = {
@@ -19,7 +20,7 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Don&apos;t Slip Just Drip - Streetwear Brand</title>
+        <title>DSJD</title>
         <meta name="description" content="Streetwear and fashion brand launching exclusive collections. Sign up for updates on new releases, discounts, and giveaways." />
         <meta name="keywords" content="streetwear, fashion, clothing, apparel, don't slip just drip" />
         <meta property="og:title" content="Don't Slip Just Drip - Streetwear Brand" />
@@ -39,7 +40,7 @@ export default function Home() {
           <div id="3d" className="mt-5 row-start-1 row-end-2"></div>
           <div className="container bg-black p-5 text-white flex items-center justify-center flex-col text-sm mt-5 row-start-2 row-end-3">
             <p className="leading-4 chivo-mono text-sm text-center">
-              12-11-2025            
+              12-11-2025
             </p>
             <a href="https://instagram.com/dontslip_justdrip" target="_blank" rel="noreferrer" className="pt-4">
               <svg
@@ -61,7 +62,7 @@ export default function Home() {
   )
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async () => {
   // Set your launch date and time here (in EST)
   // Format: YYYY-MM-DD HH:MM:SS (24-hour format)
   const LAUNCH_DATE = '2025-12-11 00:00:00'; // Example: Dec 25, 2024 at 12:00 PM EST

@@ -1,8 +1,13 @@
 import React from 'react'
 import { ProductCard } from './ProductCard'
 import FullImageBanner from '../image/FullImageBanner'
+import { ShopifyProductEdge } from '../../../types/shopify'
 
-const ProductList = ({ products }) => {
+interface ProductListProps {
+  products: ShopifyProductEdge[]
+}
+
+const ProductList = ({ products }: ProductListProps) => {
   return (
     <div className='bg-white mt-10'>
       <div className='max-w-2xl mx-auto py-6 px-4 sm:py-6 sm:px-6 lg:max-w-7xl lg:px-8'>

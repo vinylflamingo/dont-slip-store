@@ -1,6 +1,8 @@
 import { getAllProducts } from '../lib/shopify';
+import type { GetServerSideProps } from 'next';
+import { ShopifyProductHandle } from '../types/shopify';
 
-function generateSiteMap(products) {
+function generateSiteMap(products: ShopifyProductHandle[]) {
   const baseUrl = 'https://dontslipjustdrip.com';
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -38,7 +40,7 @@ function generateSiteMap(products) {
  `;
 }
 
-export async function getServerSideProps({ res }) {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // Fetch all products from Shopify
   const products = await getAllProducts();
 

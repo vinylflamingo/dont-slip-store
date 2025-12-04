@@ -2,8 +2,14 @@ import Head from 'next/head';
 import MainLayout from "../../components/layouts/MainLayout";
 import ProductPageContent from "../../components/modules/product/ProductPageContent";
 import { getAllProducts, getProduct } from "../../lib/shopify"
+import type { GetStaticPaths, GetStaticProps } from 'next';
+import { ShopifyProduct } from '../../types/shopify';
 
-export default function ProductPage({ product }) {
+interface ProductPageProps {
+  product: ShopifyProduct
+}
+
+export default function ProductPage({ product }: ProductPageProps) {
   // Create Product JSON-LD structured data
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -27,7 +33,7 @@ export default function ProductPage({ product }) {
   return (
     <MainLayout>
       <Head>
-        <title>{product.title} - Don&apos;t Slip Just Drip</title>
+        <title>{`${product.title} - Don't Slip Just Drip`}</title>
         <meta name="description" content={product.descriptionHtml?.replace(/<[^>]*>/g, '').substring(0, 160) || product.title} />
         <meta property="og:title" content={`${product.title} - Don't Slip Just Drip`} />
         <meta property="og:description" content={product.descriptionHtml?.replace(/<[^>]*>/g, '').substring(0, 160) || product.title} />
@@ -47,10 +53,10 @@ export default function ProductPage({ product }) {
   )
 }
 
-export async function getStaticPaths() {
+export const getStaticPaths: GetStaticPaths = async () => {
 
   const products = await getAllProducts();
-  const paths = products.map(item => {
+  const paths = products.map((item) => {
     const product = String(item.node.handle)
 
     return {
@@ -65,8 +71,8 @@ export async function getStaticPaths() {
   }
 }
 
-export async function getStaticProps({ params }) {
-  const product = await getProduct(params.product)
+export const getStaticProps: GetStaticProps<ProductPageProps> = async ({ params }) => {
+  const product = await getProduct(params!.product as string)
 
   return {
     props: {
