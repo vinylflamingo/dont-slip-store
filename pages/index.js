@@ -1,10 +1,38 @@
+import Head from 'next/head';
 import ThreeDModel from '../components/modules/3d/ThreeDModel';
 import LandingLayout from '../components/layouts/LandingLayout';
 import SubscribeForm from '../components/modules/mailchimp/SubscribeForm';
 
 export default function Home() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Don\'t Slip Just Drip',
+    url: 'https://dontslipjustdrip.com',
+    logo: 'https://dontslipjustdrip.com/favicon.svg',
+    sameAs: [
+      'https://instagram.com/dontslip_justdrip'
+    ],
+    description: 'Streetwear and fashion brand launching exclusive collections.'
+  };
+
   return (
     <div>
+      <Head>
+        <title>Don&apos;t Slip Just Drip - Streetwear Brand</title>
+        <meta name="description" content="Streetwear and fashion brand launching exclusive collections. Sign up for updates on new releases, discounts, and giveaways." />
+        <meta name="keywords" content="streetwear, fashion, clothing, apparel, don't slip just drip" />
+        <meta property="og:title" content="Don't Slip Just Drip - Streetwear Brand" />
+        <meta property="og:description" content="Streetwear and fashion brand launching exclusive collections." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://dontslipjustdrip.com" />
+        <meta property="og:image" content="https://dontslipjustdrip.com/favicon.svg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </Head>
       <LandingLayout>
         <ThreeDModel touchable={true}/>
         <div className="bg-black font-verdana text-white flex items-center justify-center lg:p-10 ">
