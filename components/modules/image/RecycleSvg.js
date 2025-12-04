@@ -1,9 +1,15 @@
-const RecycleSvg = ({ width = "33.1px", height = "30px" }) => (
-    <svg width={width} height={height}
+import { forwardRef } from 'react';
+
+const RecycleSvg = forwardRef(({ width = "33.1px", height = "30px" }, ref) => (
+    <svg
+      ref={ref}
+      width={width}
+      height={height}
       viewBox="0 0 777 733"
-      xmlns="http://www.w3.org/2000/svg" version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      version="1.0"
       xmlnsXlink="http://www.w3.org/1999/xlink">
-  
+
       <g fill="#009900" stroke="black" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round">
         <path d="M280 272  C134 187 134 187 134 187  C210 54 210 54 210 54  C231 17 309 16 336 48  C373 110 373 110 373 110z" />
         <path d="M162 475  C84 475 84 475 84 475  C54 471.75 4 410 34 354  C68 297 68 297 68 297  C15 266 15 266 15 266  C183 266 183 266 183 266  C268 412 268 412 268 412  C215 383 215 383 215 383z" />
@@ -12,9 +18,11 @@ const RecycleSvg = ({ width = "33.1px", height = "30px" }) => (
         <path d="M519 315  C666 231 666 231 666 231  C743 362 743 362 743 362  C771 416 723 468 691 474  C612 474 612 474 612 474z" />
         <path d="M357 35  C351 27 339 17 328 15  C525 15 525 15 525 15  C536 15 546 19 551 28  C602 118 602 118 602 118  C653 89 653 89 653 89  C570 233 570 233 570 233  C404 233 404 233 404 233  C454 203 454 203 454 203z" />
       </g>
-  
+
     </svg>
-  );
-  
-  export default RecycleSvg;
+));
+
+RecycleSvg.displayName = 'RecycleSvg';
+
+export default RecycleSvg;
   

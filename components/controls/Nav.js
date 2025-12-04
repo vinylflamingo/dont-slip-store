@@ -15,7 +15,7 @@ export default function Nav() {
     return (
         <nav className="border border-black max-w-[1266px] w-full mx-2 sticky top-2 z-20 bg-white font-chivo-mono">
             <div className="flex items-center justify-between max-w-6xl py-3 px-4 mx-auto lg:max-w-screen-xl">
-                <Link href="/" passHref>
+                <Link href="/">
                    <RecycleSvg />
                 </Link>
                 <a

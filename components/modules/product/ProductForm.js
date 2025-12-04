@@ -95,11 +95,16 @@ export default function ProductForm({ product }) {
   useEffect(() => {
     updateVariants();
   }, [cart]);
-
   return (
     <div className="p-4 flex flex-col w-full md:w-1/3">
       <h2 className='text-4xl font-bold'>{product.title}</h2>
       <span className='pb-6'>{formatter.format(product.variants.edges[0].node.priceV2.amount)}</span>
+      {product.descriptionHtml && (
+        <div
+          className="prose prose-sm mb-4"
+          dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+        />
+      )}
       {product.options.map(({ name, values }) => (
         <ProductOptions
           key={`key-${name}`}

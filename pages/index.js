@@ -2,7 +2,6 @@ import ThreeDModel from '../components/modules/3d/ThreeDModel';
 import LandingLayout from '../components/layouts/LandingLayout';
 import SubscribeForm from '../components/modules/mailchimp/SubscribeForm';
 
-
 export default function Home() {
   return (
     <div>
@@ -10,10 +9,9 @@ export default function Home() {
         <ThreeDModel touchable={true}/>
         <div className="bg-black font-verdana text-white flex items-center justify-center lg:p-10 ">
           <div id="3d" className="mt-5 row-start-1 row-end-2"></div>
-          <div className="container bg-black w-[85%] lg:w-1/2 p-5 text-white flex items-center justify-center flex-col text-sm mt-5 row-start-2 row-end-3">
+          <div className="container bg-black lg:w-1/2 p-5 text-white flex items-center justify-center flex-col text-sm mt-5 row-start-2 row-end-3">
             <p className="leading-4 chivo-mono text-sm text-center">
-              Our webstore is currently closed and will reopen soon with our Summer/Fall 2023 collection. For information
-              regarding future news, discounts, giveaways, and releases, please sign up for our mailing list below.
+              12-11-2025            
             </p>
             <a href="https://instagram.com/dontslip_justdrip" target="_blank" rel="noreferrer" className="pt-4">
               <svg
@@ -27,10 +25,39 @@ export default function Home() {
                   fill="white"></path>
               </svg>
             </a>
-            <SubscribeForm />
+            {/* <SubscribeForm /> */}
           </div>
         </div>
       </LandingLayout>
     </div>
   )
+}
+
+export async function getServerSideProps() {
+  // Set your launch date and time here (in EST)
+  // Format: YYYY-MM-DD HH:MM:SS (24-hour format)
+  const LAUNCH_DATE = '2025-12-11 00:00:00'; // Example: Dec 25, 2024 at 12:00 PM EST
+  const REDIRECT_URL = '/store/save-us-tee';
+
+  // Parse the launch date as EST
+  const launchDate = new Date(LAUNCH_DATE + ' EST');
+
+  // Get current time in EST
+  const now = new Date();
+  const estTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+
+  // Check if current time is past launch time
+  if (estTime >= launchDate) {
+    return {
+      redirect: {
+        destination: REDIRECT_URL,
+        permanent: false,
+      },
+    };
+  }
+
+  // If not past launch time, render the page normally
+  return {
+    props: {},
+  };
 }
