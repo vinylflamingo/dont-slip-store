@@ -9,7 +9,7 @@ export default function Home() {
         <ThreeDModel touchable={true}/>
         <div className="bg-black font-verdana text-white flex items-center justify-center lg:p-10 ">
           <div id="3d" className="mt-5 row-start-1 row-end-2"></div>
-          <div className="container bg-black lg:w-1/2 p-5 text-white flex items-center justify-center flex-col text-sm mt-5 row-start-2 row-end-3">
+          <div className="container bg-black p-5 text-white flex items-center justify-center flex-col text-sm mt-5 row-start-2 row-end-3">
             <p className="leading-4 chivo-mono text-sm text-center">
               12-11-2025            
             </p>
