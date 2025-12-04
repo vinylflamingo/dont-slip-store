@@ -4,7 +4,6 @@ import ProductOptions from './ProductOptions'
 import { CartContext } from '../../../context/shopContext'
 
 export default function ProductForm({ product }) {
-  console.log(product);
   const { addToCart, cartOpen, setCartOpen, cart } = useContext(CartContext);
 
   const [allVariantOptions, setAllVariantOptions] = useState(product.variants.edges

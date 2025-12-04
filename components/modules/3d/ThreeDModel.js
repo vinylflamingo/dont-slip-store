@@ -4,8 +4,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import TWEEN from '@tweenjs/tween.js';
 
 const ThreeDModel = ({ color, touchable}) => {
-    console.log("touchable: ", touchable)
-
     const containerRef = useRef();
     const canvasRef = useRef();
     const cameraRef = useRef();

@@ -3,8 +3,6 @@ import axios from 'axios';
 import updateInventory from '../../lib/shopifyAdmin';
 
 export default async function handler(req, res) {
-    console.log("Web hook hit");
-
     if (req.method === 'POST') {
         try {
             const lineItems = req.body.line_items;
