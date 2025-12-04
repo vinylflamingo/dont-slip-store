@@ -1,15 +1,22 @@
+import { ShopifyProductEdge, ShopifyProductHandle, ShopifyProduct, CartItem, Checkout, CartLineItem } from '../types/shopify'
+
 const domain = process.env.SHOPIFY_STORE_DOMAIN;
 const storefrontAccessToken = process.env.SHOPIFY_STOREFRONT_ACCESSTOKEN;
 const defaultCollection = process.env.DEFAULT_COLLECTION
 
-async function ShopifyData(query) {
+interface ShopifyResponse<T = unknown> {
+  data: T
+  errors?: Array<{ message: string }>
+}
+
+async function ShopifyData<T = unknown>(query: string): Promise<ShopifyResponse<T>> {
   const URL = `https://${domain}/api/2025-10/graphql.json`;
 
   const options = {
     endpoint: URL,
     method: "POST",
     headers: {
-      "X-Shopify-Storefront-Access-Token": storefrontAccessToken,
+      "X-Shopify-Storefront-Access-Token": storefrontAccessToken!,
       Accept: "application/json",
       "Content-Type": "application/json",
     },
@@ -27,7 +34,7 @@ async function ShopifyData(query) {
   }
 }
 
-export async function getProductsInCollection() {
+export async function getProductsInCollection(): Promise<ShopifyProductEdge[]> {
   const query = `
   {
     collection(handle: "${defaultCollection}") {
@@ -57,7 +64,13 @@ export async function getProductsInCollection() {
     }
   }`;
 
-  const response = await ShopifyData(query);
+  const response = await ShopifyData<{
+    collection: {
+      products: {
+        edges: ShopifyProductEdge[]
+      }
+    }
+  }>(query);
 
   const allProducts = response.data.collection.products.edges
     ? response.data.collection.products.edges
@@ -66,7 +79,7 @@ export async function getProductsInCollection() {
   return allProducts;
 }
 
-export async function getAllProducts() {
+export async function getAllProducts(): Promise<ShopifyProductHandle[]> {
   const query = `{
     products(first: 250) {
       edges {
@@ -78,7 +91,11 @@ export async function getAllProducts() {
     }
   }`;
 
-  const response = await ShopifyData(query);
+  const response = await ShopifyData<{
+    products: {
+      edges: ShopifyProductHandle[]
+    }
+  }>(query);
 
   const slugs = response.data.products.edges
     ? response.data.products.edges
@@ -87,7 +104,7 @@ export async function getAllProducts() {
   return slugs;
 }
 
-export async function getProduct(handle) {
+export async function getProduct(handle: string): Promise<ShopifyProduct> {
   const query = `
   {
     product(handle: "${handle}") {
@@ -162,16 +179,14 @@ export async function getProduct(handle) {
     }
   }`;
 
-  const response = await ShopifyData(query);
+  const response = await ShopifyData<{ product: ShopifyProduct }>(query);
 
-  const product = response.data.product
-    ? response.data.product
-    : [];
+  const product = response.data.product;
 
   return product;
 }
 
-export async function createCheckout(id, quantity) {
+export async function createCheckout(id: string, quantity: number): Promise<Checkout> {
   const query = `
     mutation {
       cartCreate(input: {
@@ -185,10 +200,15 @@ export async function createCheckout(id, quantity) {
       }
     }`;
 
-  const response = await ShopifyData(query);
-  const cart = response.data.cartCreate.cart
-    ? response.data.cartCreate.cart
-    : [];
+  const response = await ShopifyData<{
+    cartCreate: {
+      cart: {
+        id: string
+        checkoutUrl: string
+      }
+    }
+  }>(query);
+  const cart = response.data.cartCreate.cart;
 
   return {
     id: cart.id,
@@ -196,7 +216,7 @@ export async function createCheckout(id, quantity) {
   };
 }
 
-export async function updateCheckout(id, lineItems) {
+export async function updateCheckout(id: string, lineItems: CartItem[]): Promise<Checkout> {
   // First, get the current cart to compare line items
   const getCartQuery = `
   query {
@@ -219,7 +239,21 @@ export async function updateCheckout(id, lineItems) {
     }
   }`;
 
-  const currentCartResponse = await ShopifyData(getCartQuery);
+  const currentCartResponse = await ShopifyData<{
+    cart: {
+      id: string
+      checkoutUrl: string
+      lines: {
+        edges: Array<{
+          node: {
+            id: string
+            quantity: number
+            merchandise: { id: string }
+          }
+        }>
+      }
+    }
+  }>(getCartQuery);
   const currentCart = currentCartResponse.data?.cart;
 
   if (!currentCart) {
@@ -227,19 +261,25 @@ export async function updateCheckout(id, lineItems) {
     return { id, webUrl: '' };
   }
 
-  const currentLines = currentCart.lines.edges.map(edge => ({
+  const currentLines: CartLineItem[] = currentCart.lines.edges.map((edge: {
+    node: {
+      id: string
+      quantity: number
+      merchandise: { id: string }
+    }
+  }) => ({
     lineId: edge.node.id,
     merchandiseId: edge.node.merchandise.id,
     quantity: edge.node.quantity
   }));
 
   // Prepare updates and additions
-  const linesToUpdate = [];
-  const linesToAdd = [];
+  const linesToUpdate: Array<{ id: string; quantity: number }> = [];
+  const linesToAdd: Array<{ merchandiseId: string; quantity: number }> = [];
   const processedMerchandiseIds = new Set();
 
   lineItems.forEach(item => {
-    const existingLine = currentLines.find(line => line.merchandiseId === item.id);
+    const existingLine = currentLines.find((line) => line.merchandiseId === item.id);
 
     if (existingLine) {
       // Update existing line
@@ -261,8 +301,8 @@ export async function updateCheckout(id, lineItems) {
 
   // Find lines to remove
   const linesToRemove = currentLines
-    .filter(line => !lineItems.some(item => item.id === line.merchandiseId))
-    .map(line => line.lineId);
+    .filter((line) => !lineItems.some(item => item.id === line.merchandiseId))
+    .map((line) => line.lineId);
 
   // Execute mutations
   let updatedCart = currentCart;
@@ -292,7 +332,7 @@ export async function updateCheckout(id, lineItems) {
         }
       }
     }`;
-    const removeResponse = await ShopifyData(removeQuery);
+    const removeResponse = await ShopifyData<{ cartLinesRemove: { cart: typeof currentCart } }>(removeQuery);
     updatedCart = removeResponse.data?.cartLinesRemove?.cart || updatedCart;
   }
 
@@ -325,7 +365,7 @@ export async function updateCheckout(id, lineItems) {
         }
       }
     }`;
-    const updateResponse = await ShopifyData(updateQuery);
+    const updateResponse = await ShopifyData<{ cartLinesUpdate: { cart: typeof currentCart } }>(updateQuery);
     updatedCart = updateResponse.data?.cartLinesUpdate?.cart || updatedCart;
   }
 
@@ -358,7 +398,7 @@ export async function updateCheckout(id, lineItems) {
         }
       }
     }`;
-    const addResponse = await ShopifyData(addQuery);
+    const addResponse = await ShopifyData<{ cartLinesAdd: { cart: typeof currentCart } }>(addQuery);
     updatedCart = addResponse.data?.cartLinesAdd?.cart || updatedCart;
   }
 
@@ -368,7 +408,7 @@ export async function updateCheckout(id, lineItems) {
   };
 }
 
-export async function recursiveCatalog(cursor = "", initialRequest = true) {
+export async function recursiveCatalog(cursor = "", initialRequest = true): Promise<ShopifyProductHandle[]> {
   let data;
 
   if (cursor !== "") {
@@ -387,7 +427,14 @@ export async function recursiveCatalog(cursor = "", initialRequest = true) {
       }
     }`;
 
-    const response = await ShopifyData(query);
+    const response = await ShopifyData<{
+      products: {
+        edges: ShopifyProductHandle[]
+        pageInfo: {
+          hasNextPage: boolean
+        }
+      }
+    }>(query);
     data = response.data.products.edges ? response.data.products.edges : [];
 
     if (response.data.products.pageInfo.hasNextPage) {
@@ -415,7 +462,14 @@ export async function recursiveCatalog(cursor = "", initialRequest = true) {
     }
     `;
 
-    const response = await ShopifyData(query);
+    const response = await ShopifyData<{
+      products: {
+        edges: ShopifyProductHandle[]
+        pageInfo: {
+          hasNextPage: boolean
+        }
+      }
+    }>(query);
     data = response.data.products.edges ? response.data.products.edges : [];
 
     if (response.data.products.pageInfo.hasNextPage) {

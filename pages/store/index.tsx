@@ -6,8 +6,14 @@ import ProductList from '../../components/modules/product/ProductList'
 import MainLayout from '../../components/layouts/MainLayout'
 import FullImageBanner from '../../components/modules/image/FullImageBanner'
 import ThreeDModel from '../../components/modules/3d/ThreeDModel'
+import type { GetStaticProps } from 'next'
+import { ShopifyProductEdge } from '../../types/shopify'
 
-export default function Store({ products }) {
+interface StoreProps {
+    products: ShopifyProductEdge[]
+}
+
+export default function Store({ products }: StoreProps) {
     return (
 
         <div className="flex flex-col items-center justify-center">
@@ -21,11 +27,11 @@ export default function Store({ products }) {
     )
 }
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps<StoreProps> = async () => {
     const products = await getProductsInCollection()
     return {
-        props: { 
-            products 
+        props: {
+            products
         },
         revalidate: 60
     }

@@ -1,10 +1,17 @@
 import React from 'react'
 
-export default function ProductOptions({ name, values, selectedOptions, setOptions }) {
+interface ProductOptionsProps {
+    name: string
+    values: string[]
+    selectedOptions: { [key: string]: string }
+    setOptions: (name: string, value: string) => void
+}
+
+export default function ProductOptions({ name, values, selectedOptions, setOptions }: ProductOptionsProps) {
 
 
     // default if no variant.
-    if (name === "Title"){ 
+    if (name === "Title"){
         return <></>
     }
     return (

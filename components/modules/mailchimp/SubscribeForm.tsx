@@ -1,5 +1,4 @@
-// components/SubscribeForm.js
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import ThankYou from './ThankYou';
 
 export default function SubscribeForm() {
@@ -7,7 +6,7 @@ export default function SubscribeForm() {
     const [firstName, setFirstName] = useState('');
     const [success, setSuccess] = useState(false);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
@@ -26,7 +25,7 @@ export default function SubscribeForm() {
             }
         } catch (error) {
             console.error(error);
-            alert('Error: ' + error.message);
+            alert('Error: ' + (error as Error).message);
         }
     };
 

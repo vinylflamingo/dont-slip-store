@@ -3,12 +3,19 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import TWEEN from '@tweenjs/tween.js';
 
-const ThreeDModel = ({ color, touchable}) => {
-    const containerRef = useRef();
-    const canvasRef = useRef();
-    const cameraRef = useRef();
+interface ThreeDModelProps {
+    color?: string;
+    touchable?: boolean;
+}
+
+const ThreeDModel = ({ color, touchable }: ThreeDModelProps) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const cameraRef = useRef<THREE.PerspectiveCamera | undefined>(undefined);
 
     useEffect(() => {
+        if (!canvasRef.current || !containerRef.current) return;
+
         const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
 
         if (color === "white") {
@@ -43,8 +50,8 @@ const ThreeDModel = ({ color, touchable}) => {
         const scene = new THREE.Scene();
 
         const loader = new GLTFLoader();
-        let model = null;
-        let originalQuaternion = null;
+        let model: THREE.Group | null = null;
+        let originalQuaternion: THREE.Quaternion | null = null;
 
         loader.load('/3d/logo3d.glb', (gltf) => {
             model = gltf.scene;
@@ -88,11 +95,11 @@ const ThreeDModel = ({ color, touchable}) => {
             y: 0,
         };
 
-        const onMouseDown = (e) => {
+        const onMouseDown = (e: MouseEvent) => {
             isDragging = true;
         };
 
-        const onMouseMove = (e) => {
+        const onMouseMove = (e: MouseEvent) => {
             if (isDragging && model) {
                 const deltaMove = {
                     x: e.clientX - previousMousePosition.x,
@@ -114,27 +121,27 @@ const ThreeDModel = ({ color, touchable}) => {
             };
         };
 
-        const onMouseUp = (e) => {
+        const onMouseUp = (e: MouseEvent) => {
             isDragging = false;
-            if (model) {
+            if (model && originalQuaternion) {
                 const currentQuaternion = model.quaternion.clone();
                 const targetQuaternion = originalQuaternion;
 
                 const tween = new TWEEN.Tween({ t: 0 })
                     .to({ t: 1 }, 3000)
                     .onUpdate(({ t }) => {
-                        model.quaternion.copy(currentQuaternion).slerp(targetQuaternion, t);
+                        model!.quaternion.copy(currentQuaternion).slerp(targetQuaternion, t);
                     })
                     .start();
             }
         };
 
-        const onTouchStart = (e) => {
+        const onTouchStart = (e: TouchEvent) => {
             e.preventDefault(); // Prevents scrolling while interacting with the model
             isDragging = true;
         };
 
-        const onTouchMove = (e) => {
+        const onTouchMove = (e: TouchEvent) => {
             if (isDragging && model) {
                 const deltaMove = {
                     x: e.touches[0].clientX - previousMousePosition.x,
@@ -156,21 +163,21 @@ const ThreeDModel = ({ color, touchable}) => {
             };
         };
 
-        const onTouchEnd = (e) => {
+        const onTouchEnd = (e: TouchEvent) => {
             isDragging = false;
-            if (model) {
+            if (model && originalQuaternion) {
                 const currentQuaternion = model.quaternion.clone();
                 const targetQuaternion = originalQuaternion;
 
                 const tween = new TWEEN.Tween({ t: 0 })
                     .to({ t: 1 }, 3000)
                     .onUpdate(({ t }) => {
-                        model.quaternion.copy(currentQuaternion).slerp(targetQuaternion, t);
+                        model!.quaternion.copy(currentQuaternion).slerp(targetQuaternion, t);
                     })
                     .start();
             }
         };
-        
+
         if (touchable === true) {
             container.addEventListener('mousedown', onMouseDown);
             container.addEventListener('mousemove', onMouseMove);
@@ -184,7 +191,7 @@ const ThreeDModel = ({ color, touchable}) => {
         window.addEventListener('resize', updateCanvasSize);
 
         return () => {
-            
+
             if (touchable === true) {
                 container.removeEventListener('mousedown', onMouseDown);
                 container.removeEventListener('mousemove', onMouseMove);
@@ -199,7 +206,7 @@ const ThreeDModel = ({ color, touchable}) => {
         };
     }, [color, touchable]);
 
-    function toRadians(degrees) {
+    function toRadians(degrees: number): number {
         return degrees * Math.PI / 180;
     }
 
