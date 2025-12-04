@@ -33,7 +33,7 @@ export default function ProductPage({ product }: ProductPageProps) {
   return (
     <MainLayout>
       <Head>
-        <title>{product.title} - Don&apos;t Slip Just Drip</title>
+        <title>{`${product.title} - Don't Slip Just Drip`}</title>
         <meta name="description" content={product.descriptionHtml?.replace(/<[^>]*>/g, '').substring(0, 160) || product.title} />
         <meta property="og:title" content={`${product.title} - Don't Slip Just Drip`} />
         <meta property="og:description" content={product.descriptionHtml?.replace(/<[^>]*>/g, '').substring(0, 160) || product.title} />

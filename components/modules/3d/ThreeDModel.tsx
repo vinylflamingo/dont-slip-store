@@ -16,7 +16,13 @@ const ThreeDModel = ({ color, touchable }: ThreeDModelProps) => {
     useEffect(() => {
         if (!canvasRef.current || !containerRef.current) return;
 
-        const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
+        const renderer = new THREE.WebGLRenderer({
+            canvas: canvasRef.current,
+            antialias: true
+        });
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
 
         if (color === "white") {
             renderer.setClearColor(0xffffff, 1); // Set background color to white
@@ -60,28 +66,33 @@ const ThreeDModel = ({ color, touchable }: ThreeDModelProps) => {
             scene.add(model);
         });
 
-        // Add multiple lights to ensure the model is well-lit from all angles
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        // Add sun-like lighting with more contrast and directionality
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         scene.add(ambientLight);
 
-        const pointLight1 = new THREE.PointLight(0xffffff, 0.8);
-        pointLight1.position.set(10, 10, 10);
-        scene.add(pointLight1);
+        // Main directional light (sun)
+        const sunLight = new THREE.DirectionalLight(0xffffff, 4);
+        sunLight.position.set(5, 8, 5);
+        scene.add(sunLight);
 
-        const pointLight2 = new THREE.PointLight(0xffffff, 0.8);
-        pointLight2.position.set(-10, -10, 10);
-        scene.add(pointLight2);
+        // Key light (bright, main illumination)
+        const keyLight = new THREE.PointLight(0xffffff, 5);
+        keyLight.position.set(10, 10, 10);
+        scene.add(keyLight);
 
-        const pointLight3 = new THREE.PointLight(0xffffff, 0.8);
-        pointLight3.position.set(-10, 10, -10);
-        scene.add(pointLight3);
+        // Fill light (softer, to reduce harsh shadows)
+        const fillLight = new THREE.PointLight(0xb8d4ff, 2);
+        fillLight.position.set(-10, 5, 5);
+        scene.add(fillLight);
 
-        const pointLight4 = new THREE.PointLight(0xffffff, 0.8);
-        pointLight4.position.set(10, -10, -10);
-        scene.add(pointLight4);
+        // Rim light (for edge definition and contrast)
+        const rimLight = new THREE.PointLight(0xffffff, 3);
+        rimLight.position.set(0, 5, -10);
+        scene.add(rimLight);
 
         function animate() {
             requestAnimationFrame(animate);
+            TWEEN.update();
             if (model) {
                 model.rotation.y += 0.01;
             }
